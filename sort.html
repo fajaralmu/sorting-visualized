@@ -5,6 +5,7 @@
         <script type="text/javascript">
             let arr = new Array();
             let runningIndex = 0;
+            let swappedIndex = 0;
             function generateArray(){
                 arr = new Array();
                 for (let i = 0; i < 100; i++) {
@@ -25,28 +26,29 @@
             }
             function calculate(i, values) {
                 if (i >= values.length) {
-                    alert("STOP");
+                    // alert("STOP");
                     return;
                 }
                 console.debug("calculate: "+runningIndex + " of "+values.length);
                 runningIndex = i;
                 const val = values[i];
-                let min = val, idx = i;
-                loop: for (let j = 0; j < values.length; j++) {
-                    if (j <= i) continue loop;
+                let min = val;
+                swappedIndex = i;
+                loop: for (let j = i+1; j < values.length; j++) {
+                    // if (j <= i) continue loop;
                     const val2 = values[j];
                     if (val2 < min) {
                         min = val2;
-                        idx = j;
+                        swappedIndex = j;
                     }
                 }
                 doItLater(function(){
                     fillGraphic(values);
-                    swapIndex(values, i, idx);
+                    swapIndex(values, i, swappedIndex);
                     if (runningIndex < values.length) {
                         calculate(i+1, values);
                     } 
-                },50);
+                }, 70);
                 
             }
             function sort_old(...values) {
@@ -88,22 +90,35 @@
                 const tableRow = document.getElementById('tableRow');
                 tableRow.innerHTML = "";
                 for (let index = 0; index < arr.length; index++) {
+                    
+                    const swap = (index == swappedIndex);
+                    const running = (index == runningIndex);
+
                     const element = arr[index];
                     const cell = document.createElement("td");
                     cell.style.height = '100px';
                     const div = document.createElement("div");
-                    div.style.width = '5px';
+                    div.className = "block";
                     div.style.height = element +'%';
-                    div.style.backgroundColor = (index == runningIndex) ? 'rgb(200, 10, 10)':  'rgb(100,100,100)';
-
+                    div.style.backgroundColor = running ? 'rgb(200, 10, 10)' : swap ? 'rgb(10,200,10)':  'rgb(100,100,100)';
+                   
                     cell.appendChild(div);
                     tableRow.appendChild(cell);
 
                 }
             }
         </script>
+        <style>
+            * {
+                font-family: Arial, Helvetica, sans-serif;
+            }
+            .block {
+                width: 7px;
+            }
+        </style>
     </head>
     <body>
+        <h2>SORTING ALOGORITHM</h2>
         <button onclick="start()" >Start</button>
         <table id="table">
             <tr id="tableRow">
